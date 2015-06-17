@@ -6,3 +6,5 @@ class ServerConfigNotFound(Exception):
 
 class BasicConfigNotFound(Exception):
     pass
+class RsyncError(Exception):
+    pass

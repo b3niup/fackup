@@ -1,7 +1,10 @@
 import logging
 
+from subprocess import Popen, PIPE
+
 from backup.config import config, get_server_config
-from backup.exceptions import ServerConfigNotFound, BasicConfigNotFound
+from backup.exceptions import RsyncError, \
+    ServerConfigNotFound, BasicConfigNotFound
 
 class Rsync:
     def __init__(self, server):
@@ -10,6 +13,11 @@ class Rsync:
             'global': config['general'].get('rsync'),
             'server': get_server_config(server)
         }
+
+        if self.config['global'] is None:
+            err_msg = "Global config not found."
+            logging.error(err_msg)
+            raise BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
             err_msg = '%s is not defined in configuration file!' % self.server
@@ -27,8 +35,9 @@ class Rsync:
         self.ssh_key = self._get_cfg('ssh_key')
         self.source = self._get_source()
         self.exclude = self._get_excludes(self.source)
-        self.dest = "{base}/{d}".format(base=self.config['default']['dir'],
-                                        d=self.config['server'].get('dir', self.server))
+        self.dest = "{base}/{d}/rsync".format(
+            base=self.config['default']['dir'],
+            d=self.config['server'].get('dir', self.server))
 
     def _get_cfg(self, param):
         for key in ['server', 'default', 'global']:
@@ -91,23 +100,38 @@ class Rsync:
         return excludes
 
     def get_cmd(self):
-        cmd = '{binary} {params}'.format(binary=self.binary, params=self.params)
+        " Returns cmd ready to run as subprocess.Popen arg "
+
+        cmd = [self.binary, self.params]
 
         if self.source_type == 'remote':
-            protocol = '{0}'.format(self.protocol)
+            protocol = self.protocol
             if self.port:
                 protocol += ' -p {0}'.format(self.port)
             if self.ssh_key:
                 protocol += ' -i {0}'.format(self.ssh_key)
-            cmd = '{cmd} -e "{protocol}"'.format(cmd=cmd, protocol=protocol)
-            cmd += ' {user}@{server}'.format(user=self.user,
-                                             server=self.server)
-        cmd += " {0}".format(" ".join(self.source))
+
+            cmd += ['-e', '"%s"' % protocol]
+            cmd.append("{0}@{1}".format(self.user, self.server))
+
+        cmd.append(" ".join(self.source))
 
         if self.exclude:
             for item in self.exclude:
-                cmd += " --exclude={0}".format(item)
+                cmd.append("--exclude={0}".format(item))
 
-        cmd += " {dest}".format(dest=self.dest)
+        cmd.append(self.dest)
 
         return cmd
+
+    def run(self):
+        cmd = self.get_cmd()
+        logging.info(" ".join(cmd))
+
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = p.communicate()
+
+        logging.debug(stdout)
+        if stderr:
+            logging.error(stderr)
+            raise RsyncError(stderr)
