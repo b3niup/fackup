@@ -9,20 +9,7 @@ from backup.exceptions import RsyncError, \
 class Rsync:
     def __init__(self, server):
         self.server = server
-        self.config = {
-            'global': config['general'].get('rsync'),
-            'server': get_server_config(server)
-        }
-
-        if self.config['global'] is None:
-            err_msg = "Global config not found."
-            logging.error(err_msg)
-            raise BasicConfigNotFound(err_msg)
-
-        if self.config['server'] is None:
-            err_msg = '%s is not defined in configuration file!' % self.server
-            logging.error(err_msg)
-            raise ServerConfigNotFound(err_msg)
+        self._setup_config()
 
         self.source_type = self.config['server'].get('source_type')
         self.config['default'] = config[self.source_type].get('backup')
@@ -39,11 +26,28 @@ class Rsync:
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
 
-    def _get_cfg(self, param):
+    def _setup_config(self):
+        self.config = {
+            'global': config['general'].get('rsync'),
+            'server': get_server_config(self.server)
+        }
+
+        if self.config['global'] is None:
+            err_msg = "Global config not found."
+            logging.error(err_msg)
+            raise BasicConfigNotFound(err_msg)
+
+        if self.config['server'] is None:
+            err_msg = '%s is not defined in configuration file!' % self.server
+            logging.error(err_msg)
+            raise ServerConfigNotFound(err_msg)
+    def _get_cfg(self, param, default=None):
         for key in ['server', 'default', 'global']:
             val = self.config[key].get(param)
             if val is not None:
                 break
+        if val is None:
+            val = default
         return val
 
     def _get_cfg_all(self, param):
