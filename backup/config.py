@@ -25,7 +25,8 @@ def load_config(path=None):
                 config = yaml.load(f)
             break
     else:
-        raise ConfigNotFound("Could not find %s" % (path if path else "backup.yml"))
+        raise ConfigNotFound("Could not find {path}".format(
+            path=path if path else "backup.yml"))
 
     return config
 
@@ -44,3 +45,12 @@ def get_server_config(hostname, source_type=None):
             else:
                 server_config = None
     return server_config
+
+def get_hosts(source_type="all"):
+    if source_type == "all":
+        return get_hosts("local") + get_hosts("remote")
+    else:
+        hosts = []
+        for host in config[source_type]['hosts']:
+            hosts.append(host.hostname)
+        return hosts

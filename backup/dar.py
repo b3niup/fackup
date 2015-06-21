@@ -9,9 +9,12 @@ from backup.exceptions import DarError, \
     ServerConfigNotFound, BasicConfigNotFound
 
 class Dar:
-    def __init__(self, server):
+    def __init__(self, server, force_full=False):
         self.server = server
         self._setup_config()
+        self.force_full=force_full
+
+        self.log_extra = {'server': server}
 
         self.source_type = self.config['server'].get('source_type')
         self.config['default'] = config[self.source_type].get('backup')
@@ -36,12 +39,12 @@ class Dar:
 
         if self.config['global'] is None:
             err_msg = "Global config not found."
-            logging.error(err_msg)
+            logging.error(err_msg, extra=self.log_extra)
             raise BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
             err_msg = '%s is not defined in configuration file!' % self.server
-            logging.error(err_msg)
+            logging.error(err_msg, extra=self.log_extra)
             raise ServerConfigNotFound(err_msg)
 
     def _get_cfg(self, param, default=None):
@@ -60,11 +63,14 @@ class Dar:
         return vals
 
     def _get_ref(self):
-        backups = glob.glob('{0}/*.dar.*'.format(self.dest))
-        backups.sort(reverse=True)
-
         ref = None
         diff_count = 0
+
+        if self.force_full:
+            return None
+
+        backups = glob.glob('{0}/*.dar.*'.format(self.dest))
+        backups.sort(reverse=True)
 
         for backup in backups:
             if backup.find('_full.dar') != -1:
@@ -77,13 +83,16 @@ class Dar:
             ref = ref[:stop]
             logging.info("Found {count} differential backups, \
                          creating another one, based on {ref}".format(
-                             count=diff_count, ref=ref[ref.rfind('/'):]))
+                             count=diff_count, ref=ref[ref.rfind('/'):]),
+                         extra=self.log_extra)
         else:
             if backups:
                 logging.info("Found {count} differential backups, \
-                             creating full one.".format(count=diff_count))
+                             creating full one.".format(count=diff_count),
+                             extra=self.log_extra)
             else:
-                logging.info("No backups found, creating full one.")
+                logging.info("No backups found, creating full one.",
+                             extra=self.log_extra)
         return ref
 
     def get_cmd(self):
@@ -115,12 +124,12 @@ class Dar:
 
     def run(self, full=False):
         cmd = self.get_cmd()
-        logging.info(" ".join(cmd))
+        logging.info(" ".join(cmd), extra=self.log_extra)
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
 
-        logging.debug(stdout)
+        logging.debug(stdout, extra=self.log_extra)
         if stderr:
-            logging.error(stderr)
+            logging.error(stderr, extra=self.log_extra)
             raise DarError(stderr)

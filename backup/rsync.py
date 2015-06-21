@@ -11,6 +11,8 @@ class Rsync:
         self.server = server
         self._setup_config()
 
+        self.log_extra = {'server': server}
+
         self.source_type = self.config['server'].get('source_type')
         self.config['default'] = config[self.source_type].get('backup')
 
@@ -34,12 +36,12 @@ class Rsync:
 
         if self.config['global'] is None:
             err_msg = "Global config not found."
-            logging.error(err_msg)
+            logging.error(err_msg, extra=self.log_extra)
             raise BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
             err_msg = '%s is not defined in configuration file!' % self.server
-            logging.error(err_msg)
+            logging.error(err_msg, extra=self.log_extra)
             raise ServerConfigNotFound(err_msg)
     def _get_cfg(self, param, default=None):
         for key in ['server', 'default', 'global']:
@@ -130,12 +132,12 @@ class Rsync:
 
     def run(self):
         cmd = self.get_cmd()
-        logging.info(" ".join(cmd))
+        logging.info(" ".join(cmd), extra=self.log_extra)
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
 
-        logging.debug(stdout)
+        logging.debug(stdout, extra=self.log_extra)
         if stderr:
-            logging.error(stderr)
+            logging.error(stderr, extra=self.log_extra)
             raise RsyncError(stderr)
