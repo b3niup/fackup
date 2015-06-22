@@ -1,5 +1,3 @@
-import logging
-
 from subprocess import Popen, PIPE
 
 from backup.config import config, get_server_config
@@ -35,13 +33,13 @@ class Rsync:
         }
 
         if self.config['global'] is None:
-            err_msg = "Global config not found."
-            logging.error(err_msg, extra=self.log_extra)
+            err_msg = "[{0}] Global config not found.".format(self.server)
+            self.logger.error(err_msg)
             raise BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
-            err_msg = '%s is not defined in configuration file!' % self.server
-            logging.error(err_msg, extra=self.log_extra)
+            err_msg = '[{0}] Server is not defined in configuration file!'.format(self.server)
+            self.logger.error(err_msg)
             raise ServerConfigNotFound(err_msg)
     def _get_cfg(self, param, default=None):
         for key in ['server', 'default', 'global']:
@@ -132,12 +130,12 @@ class Rsync:
 
     def run(self):
         cmd = self.get_cmd()
-        logging.info(" ".join(cmd), extra=self.log_extra)
+        self.logger.debug("[{0}] {1}".format(self.server, " ".join(cmd)))
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
 
-        logging.debug(stdout, extra=self.log_extra)
+        self.logger.debug("[{0}] {1}".format(self.server, stdout))
         if stderr:
-            logging.error(stderr, extra=self.log_extra)
+            self.logger.error("[{0}] {1}".format(self.server, stderr))
             raise RsyncError(stderr)

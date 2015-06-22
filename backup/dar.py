@@ -1,5 +1,4 @@
 import glob
-import logging
 
 from datetime import datetime
 from subprocess import Popen, PIPE
@@ -38,13 +37,13 @@ class Dar:
         }
 
         if self.config['global'] is None:
-            err_msg = "Global config not found."
-            logging.error(err_msg, extra=self.log_extra)
+            err_msg = "[{0}] Global config not found.".format(self.server)
+            self.logger.error(err_msg)
             raise BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
-            err_msg = '%s is not defined in configuration file!' % self.server
-            logging.error(err_msg, extra=self.log_extra)
+            err_msg = '[{0}] Server is not defined in configuration file!'.format(self.server)
+            self.logger.error(err_msg)
             raise ServerConfigNotFound(err_msg)
 
     def _get_cfg(self, param, default=None):
@@ -81,18 +80,21 @@ class Dar:
             ref = backups[0]
             stop = ref.rfind('.dar')
             ref = ref[:stop]
-            logging.info("Found {count} differential backups, \
-                         creating another one, based on {ref}".format(
-                             count=diff_count, ref=ref[ref.rfind('/'):]),
-                         extra=self.log_extra)
+            self.logger.info("[{server}] Found {count} differential backups," \
+                         "creating another one, based on {ref}".format(
+                             server=self.server,
+                             count=diff_count,
+                             ref=ref[ref.rfind('/'):]))
         else:
             if backups:
-                logging.info("Found {count} differential backups, \
-                             creating full one.".format(count=diff_count),
-                             extra=self.log_extra)
+                self.logger.info("[{server}] Found {count} differential " \
+                                 "backups, creating full one.".format(
+                                     server=self.server,
+                                     count=diff_count))
             else:
-                logging.info("No backups found, creating full one.",
-                             extra=self.log_extra)
+                self.logger.info("[{server}] No backups found, " \
+                                 "creating full one.".format(
+                                     server=self.server))
         return ref
 
     def get_cmd(self):
@@ -124,12 +126,12 @@ class Dar:
 
     def run(self, full=False):
         cmd = self.get_cmd()
-        logging.info(" ".join(cmd), extra=self.log_extra)
+        self.logger.debug("[{0}] {1}".format(self.server, " ".join(cmd)))
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
 
-        logging.debug(stdout, extra=self.log_extra)
+        self.logger.debug("[{0}] {1}".format(self.server, stdout))
         if stderr:
-            logging.error(stderr, extra=self.log_extra)
+            self.logger.error("[{0}] {1}".format(self.server, stderr))
             raise DarError(stderr)

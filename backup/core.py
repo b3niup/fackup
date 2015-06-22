@@ -1,34 +1,19 @@
-#!/usr/bin/env python3
-#-*- coding: utf-8 -*-
-
-import argparse
 import logging
 
 from multiprocessing import Pool
 
+from backup.args import parse_args
 from backup.config import load_config, get_hosts
+
+args = parse_args()
+config = load_config(args.config)
+
 from backup.log import setup_logging
 
-config = load_config()
+setup_logging(args.verbose, args.quiet)
 
 from backup.dar import Dar
 from backup.rsync import Rsync
-
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--verbose', '-v', action='count')
-    parser.add_argument('--quiet', '-q', action='count')
-    parser.add_argument('--type', '-t', choices=['local', 'remote', 'all'],
-                        action='store', default='all', dest='source_type',
-                        help="Backup all servers of specified type.")
-    parser.add_argument('--host', '-H', action="append",
-                        help="Backup only specified host(s).")
-    parser.add_argument('--full', action='store_true',
-                        help="Force dar to create full backup.")
-    args = parser.parse_args()
-    return args
 
 
 def process(server):
@@ -37,14 +22,14 @@ def process(server):
     d = Dar(server)
     r.run()
     d.run()
-    logging.info("Backup done.", extra={'server': server})
+    log.debug("[{server}] Backup done.".format(**locals))
 
 
-if __name__ == '__main__':
-    args = parse_args()
-    setup_logging(args.verbose, args.quiet)
-
-    hosts = get_hosts(args.source_type)
+def main():
+    if args.host:
+        hosts = args.host
+    else:
+        hosts = get_hosts(args.source_type)
 
     logging.info("Starting backup for {hosts}.".format(hosts=", ".join(hosts)),
                  extra={'server': ''})
@@ -54,5 +39,5 @@ if __name__ == '__main__':
     p.close()
     p.join()
 
-    logging.info("Backup done.", extra={'server', ''})
+    logging.info("Backup done.")
 

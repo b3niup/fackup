@@ -52,5 +52,5 @@ def get_hosts(source_type="all"):
     else:
         hosts = []
         for host in config[source_type]['hosts']:
-            hosts.append(host.hostname)
+            hosts.append(host['hostname'])
         return hosts
