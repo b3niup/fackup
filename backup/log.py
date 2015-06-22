@@ -10,7 +10,7 @@ def setup_logging(verbose, quiet, logger=None):
     logger.setLevel(logging.DEBUG)
 
     fmt = logging.Formatter('[%(asctime)s] [%(process)d] ' \
-                            '%(levelname)-8s %(message)s',
+                            '%(levelname)-5s (%(name)s) %(message)s',
                             '%Y-%m-%d %H:%M:%S')
 
     logfile = config['general']['logging'].get('file')
@@ -37,7 +37,7 @@ def setup_logging(verbose, quiet, logger=None):
         stdout.setFormatter(fmt)
         logger.addHandler(stdout)
 
-    if not quiet:
+    if not quiet and not verbose:
         stderr = logging.StreamHandler()
         stderr.setLevel(logging.ERROR)
         stderr.setFormatter(fmt)

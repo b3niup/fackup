@@ -1,22 +1,15 @@
 import glob
 
 from datetime import datetime
-from subprocess import Popen, PIPE
 
-from backup.config import config, get_server_config
-from backup.exceptions import DarError, \
-    ServerConfigNotFound, BasicConfigNotFound
+from backup.cmd import BackupCommand
 
-class Dar:
+
+class Dar(BackupCommand):
     def __init__(self, server, force_full=False):
-        self.server = server
-        self._setup_config()
-        self.force_full=force_full
+        super(Dar, self).__init__(server)
 
-        self.log_extra = {'server': server}
-
-        self.source_type = self.config['server'].get('source_type')
-        self.config['default'] = config[self.source_type].get('backup')
+        self.force_full = force_full
 
         self.binary = self._get_cfg('bin')
         self.params = self._get_cfg('params', '')
@@ -29,37 +22,6 @@ class Dar:
         self.dest = "{base}/{d}/dar".format(
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
-
-    def _setup_config(self):
-        self.config = {
-            'global': config['general'].get('dar'),
-            'server': get_server_config(self.server)
-        }
-
-        if self.config['global'] is None:
-            err_msg = "[{0}] Global config not found.".format(self.server)
-            self.logger.error(err_msg)
-            raise BasicConfigNotFound(err_msg)
-
-        if self.config['server'] is None:
-            err_msg = '[{0}] Server is not defined in configuration file!'.format(self.server)
-            self.logger.error(err_msg)
-            raise ServerConfigNotFound(err_msg)
-
-    def _get_cfg(self, param, default=None):
-        for key in ['server', 'default', 'global']:
-            val = self.config[key].get(param)
-            if val is not None:
-                break
-        if val is None:
-            val = default
-        return val
-
-    def _get_cfg_all(self, param):
-        vals = []
-        for key in self.config.keys():
-            vals += self.config[key].get(param, [])
-        return vals
 
     def _get_ref(self):
         ref = None
@@ -80,21 +42,16 @@ class Dar:
             ref = backups[0]
             stop = ref.rfind('.dar')
             ref = ref[:stop]
-            self.logger.info("[{server}] Found {count} differential backups," \
-                         "creating another one, based on {ref}".format(
-                             server=self.server,
-                             count=diff_count,
-                             ref=ref[ref.rfind('/'):]))
+            self.logger.info("Found {count} differential backups, " \
+                             "creating another one, based on {ref}".format(
+                                 count=diff_count,
+                                 ref=ref[ref.rfind('/'):]))
         else:
             if backups:
-                self.logger.info("[{server}] Found {count} differential " \
-                                 "backups, creating full one.".format(
-                                     server=self.server,
-                                     count=diff_count))
+                self.logger.info("Found {count} differential backups, " \
+                                 "creating full one.".format(count=diff_count))
             else:
-                self.logger.info("[{server}] No backups found, " \
-                                 "creating full one.".format(
-                                     server=self.server))
+                self.logger.info("No backups found, creating full one.")
         return ref
 
     def get_cmd(self):
@@ -124,14 +81,3 @@ class Dar:
 
         return cmd
 
-    def run(self, full=False):
-        cmd = self.get_cmd()
-        self.logger.debug("[{0}] {1}".format(self.server, " ".join(cmd)))
-
-        p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-        stdout, stderr = p.communicate()
-
-        self.logger.debug("[{0}] {1}".format(self.server, stdout))
-        if stderr:
-            self.logger.error("[{0}] {1}".format(self.server, stderr))
-            raise DarError(stderr)

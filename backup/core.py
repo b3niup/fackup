@@ -17,12 +17,13 @@ from backup.rsync import Rsync
 
 
 def process(server):
-    logging.info("Starting backup.", extra={'server': server})
+    logger = logging.getLogger(server)
+    logger.debug("Starting backup.")
     r = Rsync(server)
     d = Dar(server)
     r.run()
     d.run()
-    log.debug("[{server}] Backup done.".format(**locals))
+    logger.debug("Backup done.")
 
 
 def main():
@@ -31,8 +32,7 @@ def main():
     else:
         hosts = get_hosts(args.source_type)
 
-    logging.info("Starting backup for {hosts}.".format(hosts=", ".join(hosts)),
-                 extra={'server': ''})
+    logging.info("Starting backup for {hosts}.".format(hosts=", ".join(hosts)))
 
     p = Pool(int(config['general'].get('process_pool', 5)))
     p.map_async(process, hosts)
