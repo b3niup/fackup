@@ -64,9 +64,10 @@ class BackupCommand(object):
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
 
-        self.logger.debug(stdout)
+        if stdout:
+            self.logger.debug(stdout.decode())
         if stderr:
-            self.logger.error(stderr)
+            self.logger.error(stderr.decode())
             error = getattr(backup.exceptions,
                             '{0}Error'.format(self.__class__.__name__))
             raise error(stderr)

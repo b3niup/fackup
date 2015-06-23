@@ -12,7 +12,7 @@ class Dar(BackupCommand):
         self.force_full = force_full
 
         self.binary = self._get_cfg('bin')
-        self.params = self._get_cfg('params', '')
+        self.params = self._get_cfg('params', '').split()
         self.config_file = self._get_cfg('config')
         self.max_diff = int(self._get_cfg('max_diff'))
 
@@ -59,18 +59,19 @@ class Dar(BackupCommand):
     def get_cmd(self):
         " Returns cmd ready to run as subprocess.Popen arg "
 
-        cmd = [self.binary, self.params]
+        cmd = [self.binary]
+        cmd += self.params
         ref = self._get_ref()
         date = datetime.now().strftime('%Y%m%d')
 
-        if ref:
+        if ref is not None:
             t = 'diff'
         else:
             t = 'full'
 
         filename = '{dest}/{date}_{t}'.format(dest=self.dest,
-                                                 date=date,
-                                                 t=t)
+                                              date=date,
+                                              t=t)
         cmd += ['-c', filename]
 
         if ref:

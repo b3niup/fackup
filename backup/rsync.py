@@ -5,7 +5,7 @@ class Rsync(BackupCommand):
         super(Rsync, self).__init__(server)
 
         self.binary = self._get_cfg('bin')
-        self.params = self._get_cfg('params')
+        self.params = self._get_cfg('params', '').split()
         self.protocol = self._get_cfg('protocol')
         self.user = self._get_cfg('user')
         self.port = self._get_cfg('port')
@@ -66,7 +66,8 @@ class Rsync(BackupCommand):
     def get_cmd(self):
         " Returns cmd ready to run as subprocess.Popen arg "
 
-        cmd = [self.binary, self.params]
+        cmd = [self.binary]
+        cmd += self.params
 
         if self.source_type == 'remote':
             protocol = self.protocol
@@ -78,7 +79,7 @@ class Rsync(BackupCommand):
             cmd += ['-e', '"%s"' % protocol]
             cmd.append("{0}@{1}".format(self.user, self.server))
 
-        cmd.append(" ".join(self.source))
+        cmd += self.source
 
         if self.exclude:
             for item in self.exclude:
