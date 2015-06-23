@@ -1,4 +1,6 @@
 import logging
+import os
+
 from subprocess import Popen, PIPE
 
 import backup.exceptions
@@ -49,6 +51,13 @@ class BackupCommand(object):
         " Should be overwritten by child class. "
         pass
     def run(self):
+        if not os.path.isdir(self.dest):
+            try:
+                os.makedirs(self.dest, 0o700)
+            except Exception as e:
+                self.logger.exception(e)
+                raise
+
         cmd = self.get_cmd()
         self.logger.debug(" ".join(cmd))
 

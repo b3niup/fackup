@@ -28,9 +28,10 @@ class Dar(BackupCommand):
         diff_count = 0
 
         if self.force_full:
+            self.logger.info("Forced full backup.")
             return None
 
-        backups = glob.glob('{0}/*.dar.*'.format(self.dest))
+        backups = glob.glob('{0}/*.dar'.format(self.dest))
         backups.sort(reverse=True)
 
         for backup in backups:
@@ -41,6 +42,7 @@ class Dar(BackupCommand):
         if diff_count < self.max_diff and backups:
             ref = backups[0]
             stop = ref.rfind('.dar')
+            stop = ref[:stop].rfind('.')
             ref = ref[:stop]
             self.logger.info("Found {count} differential backups, " \
                              "creating another one, based on {ref}".format(

@@ -20,7 +20,7 @@ def process(server):
     logger = logging.getLogger(server)
     logger.debug("Starting backup.")
     r = Rsync(server)
-    d = Dar(server)
+    d = Dar(server, args.full)
     r.run()
     d.run()
     logger.debug("Backup done.")
