@@ -10,6 +10,7 @@ class Rsync(BackupCommand):
         self.user = self._get_cfg('user')
         self.port = self._get_cfg('port')
         self.ssh_key = self._get_cfg('ssh_key')
+        self.rsync_path = self._get_cfg('rsync_path')
         self.source = self._get_source()
         self.exclude = self._get_excludes(self.source)
         self.dest = "{base}/{d}/rsync".format(
@@ -77,6 +78,10 @@ class Rsync(BackupCommand):
                 protocol += ' -i {0}'.format(self.ssh_key)
 
             cmd += ['-e', '"%s"' % protocol]
+
+            if self.rsync_path:
+                cmd.append('--rsync-path="{0}"'.format(self.rsync_path))
+
             cmd.append("{0}@{1}".format(self.user, self.server))
 
         cmd += self.source
