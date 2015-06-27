@@ -23,7 +23,7 @@ class BackupCommand(object):
         }
 
         if self.config['global'] is None:
-            err_msg = "Global config not found."
+            err_msg = 'Global config not found.'
             self.logger.error(err_msg)
             raise backup.exceptions.BasicConfigNotFound(err_msg)
 
@@ -59,7 +59,7 @@ class BackupCommand(object):
                 raise
 
         cmd = self.get_cmd()
-        self.logger.debug(" ".join(cmd))
+        self.logger.debug(' '.join(cmd))
 
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()

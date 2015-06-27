@@ -1,5 +1,6 @@
 from backup.cmd import BackupCommand
 
+
 class Rsync(BackupCommand):
     def __init__(self, server):
         super(Rsync, self).__init__(server)
@@ -13,7 +14,7 @@ class Rsync(BackupCommand):
         self.rsync_path = self._get_cfg('rsync_path')
         self.source = self._get_source()
         self.exclude = self._get_excludes(self.source)
-        self.dest = "{base}/{d}/rsync".format(
+        self.dest = '{base}/{d}/rsync'.format(
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
 
@@ -67,6 +68,8 @@ class Rsync(BackupCommand):
     def get_cmd(self):
         " Returns cmd ready to run as subprocess.Popen arg "
 
+        source = self.source
+
         cmd = [self.binary]
         cmd += self.params
 
@@ -77,20 +80,21 @@ class Rsync(BackupCommand):
             if self.ssh_key:
                 protocol += ' -i {0}'.format(self.ssh_key)
 
-            cmd += ['-e', '"%s"' % protocol]
+            cmd += ['-e', '{0}'.format(protocol)]
 
             if self.rsync_path:
-                cmd.append('--rsync-path="{0}"'.format(self.rsync_path))
+                cmd.append('--rsync-path={0}'.format(self.rsync_path))
 
-            cmd.append("{0}@{1}".format(self.user, self.server))
+            first = source[0]
+            source.remove(first)
+            cmd.append('{0}@{1}{2}'.format(self.user, self.server, first))
 
-        cmd += self.source
+        cmd += source
 
         if self.exclude:
             for item in self.exclude:
-                cmd.append("--exclude={0}".format(item))
+                cmd.append('--exclude={0}'.format(item))
 
         cmd.append(self.dest)
 
         return cmd
-

@@ -16,10 +16,10 @@ class Dar(BackupCommand):
         self.config_file = self._get_cfg('config')
         self.max_diff = int(self._get_cfg('max_diff'))
 
-        self.source = "{base}/{d}/rsync".format(
+        self.source = '{base}/{d}/rsync'.format(
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
-        self.dest = "{base}/{d}/dar".format(
+        self.dest = '{base}/{d}/dar'.format(
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
 
@@ -28,7 +28,7 @@ class Dar(BackupCommand):
         diff_count = 0
 
         if self.force_full:
-            self.logger.info("Forced full backup.")
+            self.logger.info('Forced full backup.')
             return None
 
         backups = glob.glob('{0}/*.dar'.format(self.dest))
@@ -44,16 +44,16 @@ class Dar(BackupCommand):
             stop = ref.rfind('.dar')
             stop = ref[:stop].rfind('.')
             ref = ref[:stop]
-            self.logger.info("Found {count} differential backups, " \
-                             "creating another one, based on {ref}".format(
+            self.logger.info('Found {count} differential backups, ' \
+                             'creating another one, based on {ref}'.format(
                                  count=diff_count,
                                  ref=ref[ref.rfind('/'):]))
         else:
             if backups:
-                self.logger.info("Found {count} differential backups, " \
-                                 "creating full one.".format(count=diff_count))
+                self.logger.info('Found {count} differential backups, ' \
+                                 'creating full one.'.format(count=diff_count))
             else:
-                self.logger.info("No backups found, creating full one.")
+                self.logger.info('No backups found, creating full one.')
         return ref
 
     def get_cmd(self):
