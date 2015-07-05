@@ -36,7 +36,7 @@ class Dar(BackupCommand):
         backups.sort(reverse=True)
 
         for backup in backups:
-            if backup.find('_full.dar') != -1:
+            if backup.find('_full.') != -1:
                 break
             diff_count += 1
 
