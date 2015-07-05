@@ -13,5 +13,7 @@ def parse_args():
                         help="Backup only specified host(s).")
     parser.add_argument('--full', action='store_true',
                         help="Force dar to create full backup.")
+    parser.add_argument('--dry-run', '-n', action='store_true',
+                        help="Perform a trial run with no changes made")
     args = parser.parse_args()
     return args

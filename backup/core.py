@@ -19,8 +19,8 @@ from backup.rsync import Rsync
 def process(server):
     logger = logging.getLogger(server)
     logger.debug("Starting backup.")
-    r = Rsync(server)
-    d = Dar(server, args.full)
+    r = Rsync(server, args.dry_run)
+    d = Dar(server, args.full, args.dry_run)
     r.run()
     d.run()
     logger.debug("Backup done.")

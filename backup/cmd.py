@@ -61,6 +61,9 @@ class BackupCommand(object):
         cmd = self.get_cmd()
         self.logger.debug(' '.join(cmd))
 
+        if self.dry_run:
+            return
+
         p = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = p.communicate()
         ret = p.returncode

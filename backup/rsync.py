@@ -2,8 +2,10 @@ from backup.cmd import BackupCommand
 
 
 class Rsync(BackupCommand):
-    def __init__(self, server):
+    def __init__(self, server, dry_run=False):
         super(Rsync, self).__init__(server)
+
+        self.dry_run = dry_run
 
         self.binary = self._get_cfg('bin')
         self.params = self._get_cfg('params', '').split()

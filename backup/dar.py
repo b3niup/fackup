@@ -6,10 +6,11 @@ from backup.cmd import BackupCommand
 
 
 class Dar(BackupCommand):
-    def __init__(self, server, force_full=False):
+    def __init__(self, server, force_full=False, dry_run=False):
         super(Dar, self).__init__(server)
 
         self.force_full = force_full
+        self.dry_run = dry_run
 
         self.binary = self._get_cfg('bin')
         self.params = self._get_cfg('params', '').split()
