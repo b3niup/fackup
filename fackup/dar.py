@@ -1,8 +1,10 @@
 import glob
+import os
 
 from datetime import datetime
 
 from fackup.cmd import BackupCommand
+from fackup.exceptions import DarError
 
 
 class Dar(BackupCommand):
@@ -63,7 +65,7 @@ class Dar(BackupCommand):
         cmd = [self.binary]
         cmd += self.params
         ref = self._get_ref()
-        date = datetime.now().strftime('%Y%m%d')
+        date = datetime.now().strftime('%Y%m%dT%H%M')
 
         if ref is not None:
             t = 'diff'
@@ -73,6 +75,11 @@ class Dar(BackupCommand):
         filename = '{dest}/{date}_{t}'.format(dest=self.dest,
                                               date=date,
                                               t=t)
+        if os.path.exists(filename):
+            err_msg = 'Dar out file {0} already exists.'.format(filename)
+            self.logger.error(err_msg)
+            raise DarError(err_msg)
+
         cmd += ['-c', filename]
 
         if ref:
