@@ -1,0 +1,66 @@
+general:
+  process_pool: 3                           # number of max concurrent backup processes
+
+  logging:
+    file: /root/fackup.log                  # log file
+    level: debug                            # log level
+
+  rsync:
+    bin: /usr/bin/rsync                     # local rsync path
+    params: "-XRa --stats --delete"         # rsync additional parameters
+    protocol: ssh                           # default rsync protocol
+    user: backup                            # default rsync user
+    rsync_path: 'sudo rsync'                # remote rsync path, here with 'trick' described in README.md
+    ssh_key: /backup/remote/.ssh/backup     # default ssh key
+    port: 2222                              # default ssh port
+
+  dar:
+    bin: /usr/bin/dar                       # local dar path
+    params: "-asecu"                        # dar additional parameters
+    config: /backup/remote/darrc            # dar config file
+    max_diff: 5                             # max number of differential backups before creating full one
+
+
+# local backup hosts
+local:
+  backup:                                   # general config for local hosts
+    dir: /backup/local                      # base local backup dir
+    max_diff: 10                            # overwrites max_diff defined in general.dar section
+  hosts:
+    - hostname: desktop
+      paths:
+        - /home/xxx/Books
+        - /home/xxx/Docs
+        - /home/xxx/dotfiles
+        - /home/xxx/tools
+      exclude:
+        - /home/xxx/Docs/School
+
+# remote backup hosts
+remote:
+  backup:                                   # general config for remote hosts
+    dir: /backup/remote                     # base local backup dir
+    paths:
+      - /etc                                # default paths to include in backup
+      - /backup
+      - /root
+      - /var/www
+
+  hosts:
+    - hostname: host1.yyy.com
+      dir: host1                            # backup dir (as a suffix for remote.backup.dir path)
+      paths:                                # additional paths (next to those defined in remote.backup.paths) to include in backup
+        - /var/vmail
+
+    - hostname: host2.example.com
+      port: 22
+      dir: example/host2
+
+    - hostname: host3.example.com
+      dir: example/host3
+
+    - hostname: host4.example.com
+      dir: example/host4
+
+      paths:
+        - /var/lib/carbon
