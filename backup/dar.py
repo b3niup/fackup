@@ -15,7 +15,7 @@ class Dar(BackupCommand):
         self.binary = self._get_cfg('bin')
         self.params = self._get_cfg('params', '').split()
         self.config_file = self._get_cfg('config')
-        self.max_diff = int(self._get_cfg('max_diff'))
+        self.max_diff = int(self._get_cfg('max_diff', 0))
 
         self.source = '{base}/{d}/rsync'.format(
             base=self.config['default']['dir'],

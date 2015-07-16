@@ -89,7 +89,13 @@ class Rsync(BackupCommand):
 
             first = source[0]
             source.remove(first)
-            cmd.append('{0}@{1}{2}'.format(self.user, self.server, first))
+
+            conn = ""
+            if self.user:
+                conn = "{0}@".format(self.user)
+
+            conn += '{0}{1}'.format(self.server, first)
+            cmd.append(conn)
 
         cmd += source
 
