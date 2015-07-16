@@ -13,7 +13,10 @@ def setup_logging(verbose, quiet, logger=None):
                             '%(levelname)-5s (%(name)s) %(message)s',
                             '%Y-%m-%d %H:%M:%S')
 
-    logfile = config['general']['logging'].get('file')
+    logfile = None
+    if 'logging' in config['general'].keys():
+        logfile = config['general']['logging'].get('file')
+
     if logfile:
         logfile_level = config['general']['logging'].get('level', 'info')
         logfile_level = logfile_level.lower()

@@ -3,10 +3,10 @@ import logging
 from multiprocessing import Pool
 
 from fackup.args import parse_args
-from fackup.config import load_config, get_hosts
+from fackup.config import config_load, config_verify, get_hosts
 
 args = parse_args()
-config = load_config(args.config)
+config = config_load(args.config)
 
 from fackup.log import setup_logging
 
@@ -27,6 +27,8 @@ def process(server):
 
 
 def main():
+    config_verify(config)
+
     if args.host:
         hosts = args.host
     else:
