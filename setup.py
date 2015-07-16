@@ -7,18 +7,23 @@ setup(name='fackup',
       author='Benedykt Przybyło',
       author_email='benedykt.przybylo@gmail.com',
       url='https://github.com/b3niup/fackup',
+      keywords='backup dar rsync',
       packages=find_packages(),
-      scripts=['scripts/fackup'],
+      entry_points={
+          'console_scripts': [
+              'fackup = fackup.core:main',
+          ]
+      },
       data_files=[('/etc', ['fackup.yml.example'])],
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Environment :: Console',
-          'Intended Audience :: End Users/Desktop',
           'Intended Audience :: Developers',
+          'Intended Audience :: End Users/Desktop',
           'Intended Audience :: System Administrators',
           'License :: OSI Approved :: MIT License',
           'Operating System :: POSIX',
           'Programming Language :: Python :: 3.4',
+          'Topic :: System :: Archiving :: Backup',
           'Topic :: System :: Systems Administration',
       ])
-

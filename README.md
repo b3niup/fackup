@@ -24,7 +24,24 @@ and creates full or incremental dar archives depending on configuration.
 
 # Installation
 
-TODO
+Please make sure that requirements are installed before using fackup!  
+Both [rsync](https://rsync.samba.org) and [dar](http://dar.linux.free.fr/) 
+should be available in your distro repository. 
+
+
+Then, you can install fackup from pip:
+```
+pip3 install fackup
+```
+
+or get the source and run:
+
+```
+python3 setup.py install
+```
+
+Then setup your configuration as explained below.
+
 
 # Configuration
 
@@ -76,7 +93,7 @@ remote:
 
 ```
 
-You can find more complex configuration example in fackup.yml.example file.
+You can find more complex configuration example in *fackup.yml.example* file.
 
 # Usage
 
@@ -129,7 +146,7 @@ With setup based on example configuration file local filesystem structure will b
 
 ## Restoration
 
-**Fackup** in current version **does not implement any restore mechanism**.
+**Fackup** in current version **does not implement any restoration mechanism**.
 
 Because rsync directory always contains latest backup you can use any method you like to restore files to their original location.
 
