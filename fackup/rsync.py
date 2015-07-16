@@ -1,4 +1,4 @@
-from backup.cmd import BackupCommand
+from fackup.cmd import BackupCommand
 
 
 class Rsync(BackupCommand):

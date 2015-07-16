@@ -2,18 +2,18 @@ import logging
 
 from multiprocessing import Pool
 
-from backup.args import parse_args
-from backup.config import load_config, get_hosts
+from fackup.args import parse_args
+from fackup.config import load_config, get_hosts
 
 args = parse_args()
 config = load_config(args.config)
 
-from backup.log import setup_logging
+from fackup.log import setup_logging
 
 setup_logging(args.verbose, args.quiet)
 
-from backup.dar import Dar
-from backup.rsync import Rsync
+from fackup.dar import Dar
+from fackup.rsync import Rsync
 
 
 def process(server):

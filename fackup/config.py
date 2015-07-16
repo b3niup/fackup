@@ -1,12 +1,12 @@
 import os
 import yaml
 
-from backup.exceptions import ConfigNotFound
+from fackup.exceptions import ConfigNotFound
 
 DEFAULT_CONFIG_PATHS = [
-    './backup.yml',
-    '~/.backup.yml',
-    '/etc/backup.yml',
+    './fackup.yml',
+    '~/.fackup.yml',
+    '/etc/fackup.yml',
 ]
 
 config = None
@@ -26,7 +26,7 @@ def load_config(path=None):
             break
     else:
         raise ConfigNotFound("Could not find {path}".format(
-            path=path if path else "backup.yml"))
+            path=path if path else "fackup.yml"))
 
     return config
 

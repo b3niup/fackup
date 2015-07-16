@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from backup.config import config
+from fackup.config import config
 
 
 def setup_logging(verbose, quiet, logger=None):

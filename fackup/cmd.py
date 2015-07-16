@@ -3,8 +3,8 @@ import os
 
 from subprocess import Popen, PIPE
 
-import backup.exceptions
-from backup.config import config, get_server_config
+import fackup.exceptions
+from fackup.config import config, get_server_config
 
 class BackupCommand(object):
     def __init__(self, server):
@@ -25,12 +25,12 @@ class BackupCommand(object):
         if self.config['global'] is None:
             err_msg = 'Global config not found.'
             self.logger.error(err_msg)
-            raise backup.exceptions.BasicConfigNotFound(err_msg)
+            raise fackup.exceptions.BasicConfigNotFound(err_msg)
 
         if self.config['server'] is None:
             err_msg = 'Server is not defined in configuration file!'
             self.logger.error(err_msg)
-            raise backup.exceptions.ServerConfigNotFound(err_msg)
+            raise fackup.exceptions.ServerConfigNotFound(err_msg)
 
     def _get_cfg(self, param, default=None):
         for key in ['server', 'default', 'global']:
@@ -73,7 +73,7 @@ class BackupCommand(object):
         if stderr and len(stderr.decode()) > 0:
             if ret != 0:
                 self.logger.error(stderr.decode())
-                error = getattr(backup.exceptions,
+                error = getattr(fackup.exceptions,
                                 '{0}Error'.format(self.__class__.__name__))
                 raise error(stderr)
             else:
