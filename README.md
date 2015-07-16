@@ -25,10 +25,14 @@ and creates full or incremental dar archives depending on configuration.
 
 # Installation
 
+### Arch Linux
+[Arch Linux](https://www.archlinux.org/) users can simply install fackup from [AUR](https://aur.archlinux.org/packages/fackup/).
+
+### Other distributions
+
 Please make sure that requirements are installed before using fackup.  
 Both [rsync](https://rsync.samba.org) and [dar](http://dar.linux.free.fr/) 
 should be available in your distro repository. 
-
 
 Then, you can install fackup from pip:
 ```
