@@ -19,12 +19,13 @@ and creates full or incremental dar archives depending on configuration.
 ## Requirements
 
 * [Python 3](http://python.org)
+* [PyYAML](http://pyyaml.org/wiki/PyYAML)
 * [rsync](https://rsync.samba.org)
 * [dar - Disk ARchive](http://dar.linux.free.fr/)
 
 # Installation
 
-Please make sure that requirements are installed before using fackup!  
+Please make sure that requirements are installed before using fackup.  
 Both [rsync](https://rsync.samba.org) and [dar](http://dar.linux.free.fr/) 
 should be available in your distro repository. 
 

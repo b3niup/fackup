@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='fackup',
-      version='0.1.0',
+      version='0.1.1',
       description='File backup tool using rsync and dar.',
       author='Benedykt Przybyło',
       author_email='benedykt.przybylo@gmail.com',
@@ -15,6 +15,7 @@ setup(name='fackup',
           ]
       },
       data_files=[('/etc', ['fackup.yml.example'])],
+      install_requires=['PyYAML>=3.0'],
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Environment :: Console',
