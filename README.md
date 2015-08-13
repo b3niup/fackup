@@ -198,7 +198,10 @@ Sample ansible role excerpt for user creation and sudoers setup:
 ```
 
 ## TODO
-
-* Backup validation
-* Full backup restoration(?)
+* Rewrite config-related functions.
+* Add tests.
+* Add pre and post actions.
+* Add possibility to customize host groups.
+* Add backup validation.
+* Add full backup restoration(?)
 
