@@ -31,8 +31,7 @@ class Rsync(BackupCommand):
             if path in excludes:
                 continue
 
-            if self.source_type == 'remote':
-                path = ':%s' % path
+            path = ':%s' % path
             source.append(path)
         return source
 
@@ -50,8 +49,7 @@ class Rsync(BackupCommand):
                 match_len = len(exclude)
                 match = None
                 for source in sources:
-                    if self.source_type == 'remote':
-                        source = source[1:]
+                    source = source[1:]
 
                     # find shortest matching source to be most precise with
                     # exclude
@@ -75,27 +73,26 @@ class Rsync(BackupCommand):
         cmd = [self.binary]
         cmd += self.params
 
-        if self.source_type == 'remote':
-            protocol = self.protocol
-            if self.port:
-                protocol += ' -p {0}'.format(self.port)
-            if self.ssh_key:
-                protocol += ' -i {0}'.format(self.ssh_key)
+        protocol = self.protocol
+        if self.port:
+            protocol += ' -p {0}'.format(self.port)
+        if self.ssh_key:
+            protocol += ' -i {0}'.format(self.ssh_key)
 
-            cmd += ['-e', '{0}'.format(protocol)]
+        cmd += ['-e', '{0}'.format(protocol)]
 
-            if self.rsync_path:
-                cmd.append('--rsync-path={0}'.format(self.rsync_path))
+        if self.rsync_path:
+            cmd.append('--rsync-path={0}'.format(self.rsync_path))
 
-            first = source[0]
-            source.remove(first)
+        first = source[0]
+        source.remove(first)
 
-            conn = ""
-            if self.user:
-                conn = "{0}@".format(self.user)
+        conn = ""
+        if self.user:
+            conn = "{0}@".format(self.user)
 
-            conn += '{0}{1}'.format(self.server, first)
-            cmd.append(conn)
+        conn += '{0}{1}'.format(self.server, first)
+        cmd.append(conn)
 
         cmd += source
 
