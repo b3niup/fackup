@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 setup(name='fackup',
-      version='0.1.3',
+      version='0.1.4',
       description='File backup tool using rsync and dar.',
       author='Benedykt Przybyło',
       author_email='b3niup@gmail.com',

@@ -17,7 +17,7 @@ def config_get(path):
     config_path = os.path.expanduser(path)
     if os.path.isfile(config_path) and os.access(config_path, os.R_OK):
         with open(config_path, 'r') as f:
-            config = yaml.load(f)
+            config = yaml.safe_load(f)
     return config
 
 def config_load(path=None):
