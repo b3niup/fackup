@@ -13,6 +13,9 @@ general:
     rsync_path: 'sudo rsync'                # remote rsync path, here with 'trick' described in README.md
     ssh_key: /backup/remote/.ssh/backup     # default ssh key
     port: 2222                              # default ssh port
+    ssh_bin: /usr/bin/ssh
+    pre_action: 'touch /tmp/backup_running; sudo backup_mysql.sh'
+    post_action: 'rm /tmp/backup_running 2>/dev/null || true'
 
   dar:
     bin: /usr/bin/dar                       # local dar path

@@ -59,6 +59,12 @@ class Dar(BackupCommand):
                 self.logger.info('No backups found, creating full one.')
         return ref
 
+    def pre_run(self):
+        pass
+
+    def post_run(self):
+        pass
+
     def get_cmd(self):
         " Returns cmd ready to run as subprocess.Popen arg "
 

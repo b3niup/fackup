@@ -20,6 +20,11 @@ class Rsync(BackupCommand):
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
 
+        self.ssh_binary = self._get_cfg('ssh_bin', '/usr/bin/ssh')
+        self.ssh_params = self._get_cfg('ssh_params', '')
+        self.pre_action = self._get_cfg('pre_action')
+        self.post_action = self._get_cfg('post_action')
+
     def _get_source(self):
         source = []
 
@@ -64,6 +69,33 @@ class Rsync(BackupCommand):
             else:
                 excludes.append(exclude)
         return excludes
+
+    def _ssh_action(self, command):
+        if command is None:
+            return
+
+        cmd = [self.ssh_binary, self.ssh_params]
+
+        if self.port:
+            cmd += ['-p', '{0}'.format(self.port)]
+        if self.ssh_key:
+            cmd += ['-i', '{0}'.format(self.ssh_key)]
+        conn = ''
+        if self.user:
+            conn = '{0}@'.format(self.user)
+        conn += '{0}'.format(self.server)
+
+        cmd.append(conn)
+        cmd.append('"{0}"'.format(command))
+
+        self._exec(cmd)
+
+
+    def pre_run(self):
+        self._ssh_action(self.pre_action)
+
+    def post_run(self):
+        self._ssh_action(self.post_action)
 
     def get_cmd(self):
         " Returns cmd ready to run as subprocess.Popen arg "

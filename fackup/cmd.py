@@ -50,15 +50,16 @@ class BackupCommand(object):
     def get_cmd(self):
         " Should be overwritten by child class. "
         pass
-    def run(self):
-        if not os.path.isdir(self.dest):
-            try:
-                os.makedirs(self.dest, 0o700)
-            except Exception as e:
-                self.logger.exception(e)
-                raise
 
-        cmd = self.get_cmd()
+    def pre_run(self):
+        " Can be overwritten by child class. "
+        pass
+
+    def post_run(self):
+        " Can be overwritten by child class. "
+        pass
+
+    def _exec(self, cmd):
         self.logger.debug(' '.join(cmd))
 
         if self.dry_run:
@@ -78,3 +79,24 @@ class BackupCommand(object):
                 raise error(stderr)
             else:
                 self.logger.info(stderr.decode())
+
+    def run(self):
+        if not os.path.isdir(self.dest):
+            try:
+                os.makedirs(self.dest, 0o700)
+            except Exception as e:
+                self.logger.exception(e)
+                raise
+
+        try:
+            self.pre_run()
+
+            cmd = self.get_cmd()
+            self._exec(cmd)
+        except Exception as e:
+            self.logger.exception(e)
+            self.post_run()
+            raise
+
+        self.post_run()
+
