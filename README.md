@@ -68,32 +68,32 @@ general:
 
 
 groups:
-	local:
-	  backup:                                   # general config for local hosts
-		dir: /backup/local                      # base local backup dir
+    local:
+      backup:                                   # general config for local hosts
+        dir: /backup/local                      # base local backup dir
 
-	  hosts:
-		- hostname: desktop
-		  paths:
-			- /home/xxx/Books
-			- /home/xxx/Docs
-			- /home/xxx/dotfiles
-			- /home/xxx/tools
-		  exclude:
-			- /home/xxx/Docs/School
+      hosts:
+        - hostname: desktop
+          paths:
+            - /home/xxx/Books
+            - /home/xxx/Docs
+            - /home/xxx/dotfiles
+            - /home/xxx/tools
+          exclude:
+            - /home/xxx/Docs/School
 
-	remote:
-	  backup:                                   # general config for remote hosts
-		dir: /backup/remote                     # base local backup dir
-		paths:
-		  - /etc                                # default paths to include in backup
-		  - /root
-		  - /var
+    remote:
+      backup:                                   # general config for remote hosts
+        dir: /backup/remote                     # base local backup dir
+        paths:
+          - /etc                                # default paths to include in backup
+          - /root
+          - /var
 
-	  hosts:
-		- hostname: host1.example.com
-		- hostname: host2.example.com
-		- hostname: host3.example.com
+      hosts:
+        - hostname: host1.example.com
+        - hostname: host2.example.com
+        - hostname: host3.example.com
 
 ```
 
