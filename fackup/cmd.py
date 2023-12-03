@@ -13,8 +13,8 @@ class BackupCommand(object):
 
         self._setup_config()
 
-        self.source_type = self.config['server'].get('source_type')
-        self.config['default'] = config[self.source_type].get('backup')
+        self.source_group = self.config['server'].get('source_group')
+        self.config['default'] = config['groups'][self.source_group].get('backup')
 
     def _setup_config(self):
         self.config = {

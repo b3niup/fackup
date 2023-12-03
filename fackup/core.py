@@ -32,7 +32,7 @@ def main():
     if args.host:
         hosts = args.host
     else:
-        hosts = get_hosts(args.source_type)
+        hosts = get_hosts(args.source_group)
 
     logging.info("Starting backup for {hosts}.".format(hosts=", ".join(hosts)))
 

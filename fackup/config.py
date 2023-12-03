@@ -71,28 +71,36 @@ def config_verify(config):
             logging.error(err_msg)
             raise fackup.exceptions.CommandNotFound(err_msg)
 
-def get_server_config(hostname, source_type=None):
-    if source_type is None:
-        for t in ['local', 'remote']:
-            server_config = get_server_config(hostname, t)
+def get_server_groups():
+    return list(config.get('groups', {}).keys())
+
+def get_server_config(hostname, source_group=None):
+    if source_group is None:
+        for g in get_server_groups():
+            server_config = get_server_config(hostname, g)
             if server_config is not None:
                break
     else:
-        for i in range(len(config[source_type]['hosts'])):
-            server_config = config[source_type]['hosts'][i]
+        for i in range(len(config['groups'][source_group]['hosts'])):
+            server_config = config['groups'][source_group]['hosts'][i]
             if server_config.get('hostname', '') == hostname:
-                server_config['source_type'] = source_type
+                server_config['source_group'] = source_group
                 break
             else:
                 server_config = None
     return server_config
 
-def get_hosts(source_type="all"):
-    if source_type == "all":
-        return get_hosts("local") + get_hosts("remote")
+def get_hosts(source_group="all"):
+    hosts = []
+    if source_group == "all":
+        groups = get_server_groups()
+    elif ',' in source_group:
+        groups = source_group.split(',')
     else:
-        hosts = []
-        if config.get(source_type) is not None:
-            for host in config[source_type]['hosts']:
+        groups = [source_group, ]
+
+    for group in groups:
+        if group in config.get('groups', {}):
+            for host in config['groups'][group].get('hosts', []):
                 hosts.append(host['hostname'])
-        return hosts
+    return hosts
