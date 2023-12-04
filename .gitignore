@@ -1,5 +1,7 @@
 __pycache__/
 *.py[cod]
 *.swp
+dist/
+*-egg.info
 
 .ropeproject/
