@@ -74,7 +74,10 @@ class Rsync(BackupCommand):
         if command is None:
             return
 
-        cmd = [self.ssh_binary, self.ssh_params]
+        cmd = [self.ssh_binary,]
+
+        if self.ssh_params:
+            cmd.append(self.ssh_params)
 
         if self.port:
             cmd += ['-p', '{0}'.format(self.port)]
@@ -86,7 +89,7 @@ class Rsync(BackupCommand):
         conn += '{0}'.format(self.server)
 
         cmd.append(conn)
-        cmd.append('"{0}"'.format(command))
+        cmd.append(command)
 
         self._exec(cmd)
 
