@@ -60,6 +60,8 @@ groups:
 
         - hostname: host3.example.com
           dir: example/host3
+          exclude_dar:
+            - */tmp
 
         - hostname: host4.example.com
           dir: example/host4

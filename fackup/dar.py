@@ -19,6 +19,8 @@ class Dar(BackupCommand):
         self.config_file = self._get_cfg('config')
         self.max_diff = int(self._get_cfg('max_diff', 0))
 
+        self.exclude = self._get_cfg('exclude_dar')
+
         self.source = '{base}/{d}/rsync'.format(
             base=self.config['default']['dir'],
             d=self.config['server'].get('dir', self.server))
@@ -93,6 +95,10 @@ class Dar(BackupCommand):
 
         if self.config_file:
             cmd += ['-B', self.config_file]
+
+        if self.exclude:
+            for item in self.exclude:
+                cmd += ['-P', item]
 
         cmd += ['-R', self.source]
 
