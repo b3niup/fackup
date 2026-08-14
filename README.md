@@ -1,3 +1,5 @@
+
+
 # fackup
 File backup tool using rsync and dar.
 
@@ -50,7 +52,7 @@ Then setup your configuration as explained below.
 
 # Configuration
 
-Fackup will attempt to read `./fackup.conf`, `~/.fackup.conf` and `/etc/fackup.conf` in that order.
+Fackup will attempt to read `./fackup.yml`, `~/.fackup.yml` and `/etc/fackup.yml` in that order.
 
 Simple example:
 ```yaml
@@ -128,20 +130,20 @@ With setup based on example configuration file local filesystem structure will b
 ```
 /backup
 ├── local
-│   └── desktop
-│       ├── dar
-│       └── rsync
+│   └── desktop
+│       ├── dar
+│       └── rsync
 └── remote
     ├── example
-    │   ├── host2
-    │   │   ├── dar
-    │   │   └── rsync
-    │   ├── host3
-    │   │   ├── dar
-    │   │   └── rsync
-    │   └── host4
-    │       ├── dar
-    │       └── rsync
+    │   ├── host2
+    │   │   ├── dar
+    │   │   └── rsync
+    │   ├── host3
+    │   │   ├── dar
+    │   │   └── rsync
+    │   └── host4
+    │       ├── dar
+    │       └── rsync
     └── host1
         ├── dar
         └── rsync
@@ -201,4 +203,3 @@ Sample ansible role excerpt for user creation and sudoers setup:
 * Add tests.
 * Add backup validation.
 * Add full backup restoration(?)
-
